@@ -20,7 +20,7 @@ public class ContactServiceImpl implements ContactService {
         new Contact("Mike", "Brown", LocalDate.of(1993, 03, 06), new Address("79 Bed Stuy Borrough", "Queens", "New York", "94213"))));
 
     @Override
-    public List<Contact> getAllContacts(String postalCode) {
+    public List<Contact> getContacts(String postalCode) {
         if (postalCode == null) 
             return contacts;
         else

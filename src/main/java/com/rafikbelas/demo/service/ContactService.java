@@ -6,7 +6,7 @@ import com.rafikbelas.demo.model.Contact;
 
 public interface ContactService {
 
-    List<Contact> getAllContacts(String postalCode);
+    List<Contact> getContacts(String postalCode);
 
     void create(Contact contact);
 }

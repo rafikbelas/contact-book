@@ -24,8 +24,8 @@ public class ContactController {
     private ContactService contactService;
 
     @GetMapping
-    public List<Contact> getAllContacts(@RequestParam(required = false) String postalCode) {
-        return contactService.getAllContacts(postalCode);
+    public List<Contact> getContacts(@RequestParam(required = false) String postalCode) {
+        return contactService.getContacts(postalCode);
     }
 
     @PostMapping
