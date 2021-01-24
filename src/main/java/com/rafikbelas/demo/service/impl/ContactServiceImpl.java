@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 public class ContactServiceImpl implements ContactService {
 
     List<Contact> contacts = new ArrayList<Contact>(Arrays.asList(
-        new Contact("John", "Doe", LocalDate.of(1994, 02, 01), new Address("California", "90210")),
-        new Contact("Mike", "Brown", LocalDate.of(1993, 03, 06), new Address("New York", "94213"))));
+        new Contact("John", "Doe", LocalDate.of(1994, 02, 01), new Address("12 Walk of Fame", "Hollywood", "California", "90210")),
+        new Contact("Mike", "Brown", LocalDate.of(1993, 03, 06), new Address("79 Bed Stuy Borrough", "Queens", "New York", "94213"))));
 
     @Override
     public List<Contact> getAllContacts() {
