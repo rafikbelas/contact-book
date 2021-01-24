@@ -13,11 +13,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class ContactServiceImpl implements ContactService {
 
+    List<Contact> contacts = Arrays.asList(
+        new Contact("John", "Doe", LocalDate.of(1994, 02, 01), new Address("California", "90210")), 
+        new Contact("Mike", "Brown", LocalDate.of(1993, 03, 06), new Address("New York", "94213")));
+
     @Override
     public List<Contact> getAllContacts() {
-        return Arrays.asList(
-            new Contact("John", "Doe", LocalDate.of(1994, 02, 01), new Address("California", "90210")), 
-            new Contact("Mike", "Brown", LocalDate.of(1993, 03, 06), new Address("New York", "94213")));
+        return contacts;
     }
     
 }
