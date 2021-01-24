@@ -23,7 +23,7 @@ public class ContactController {
     private ContactService contactService;
 
     @GetMapping
-    public List<Contact> getAllContacts(String type) {
+    public List<Contact> getAllContacts() {
         return contactService.getAllContacts();
     }
 
