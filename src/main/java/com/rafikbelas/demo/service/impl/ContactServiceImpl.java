@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.rafikbelas.demo.model.Address;
 import com.rafikbelas.demo.model.Contact;
@@ -19,8 +20,13 @@ public class ContactServiceImpl implements ContactService {
         new Contact("Mike", "Brown", LocalDate.of(1993, 03, 06), new Address("79 Bed Stuy Borrough", "Queens", "New York", "94213"))));
 
     @Override
-    public List<Contact> getAllContacts() {
-        return contacts;
+    public List<Contact> getAllContacts(String postalCode) {
+        if (postalCode == null) 
+            return contacts;
+        else
+            return contacts.stream()
+                    .filter(contact -> contact.getAddress().getPostalCode().equals(postalCode))
+                    .collect(Collectors.toList());
     }
 
     @Override
