@@ -1,5 +1,8 @@
 package com.rafikbelas.demo.controllers;
 
+import java.util.List;
+
+import com.rafikbelas.demo.model.Contact;
 import com.rafikbelas.demo.service.ContactService;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +19,7 @@ public class ContactController {
     private ContactService contactService;
 
     @GetMapping
-    public String getAllContacts(String type) {
+    public List<Contact> getAllContacts(String type) {
         return contactService.getAllContacts();
     }
 }
