@@ -18,7 +18,7 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public List<Contact> getContacts(String postalCode) {
-        if (postalCode == null) 
+        if (postalCode == null || postalCode.isEmpty()) 
             return contactRepository.findAll();
         else
             return contactRepository.findByAddressPostalCode(postalCode);
