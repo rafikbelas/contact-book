@@ -1,5 +1,7 @@
 package com.rafikbelas.demo.controllers;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,8 +47,10 @@ public class ContactController {
     }
 
     private Contact mapToContact(ContactCreationDTO contactDTO) {
-        return Contact.builder().firstName(contactDTO.getFirstName()).lastName(contactDTO.getLastName())
-                // .dateOfBirth(dateOfBirth)
+        return Contact.builder()
+                .firstName(contactDTO.getFirstName())
+                .lastName(contactDTO.getLastName())
+                .dateOfBirth(LocalDate.parse(contactDTO.getDateOfBirth()))
                 .address(mapToAddress(contactDTO.getAddress())).build();
     }
 
@@ -71,10 +75,11 @@ public class ContactController {
     }
 
     private ContactDTO mapToContactDTO(Contact contact) {
+
         return ContactDTO.builder()
                 .firstName(contact.getFirstName())
                 .lastName(contact.getLastName())
-                .dateOfBirth(contact.getDateOfBirth().getTime().toString())
+                .dateOfBirth(contact.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd LLLL yyyy")))
                 .address(mapToAddressDTO(contact.getAddress()))
                 .build();
     }

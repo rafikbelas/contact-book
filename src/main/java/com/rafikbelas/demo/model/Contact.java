@@ -1,6 +1,6 @@
 package com.rafikbelas.demo.model;
 
-import java.util.Calendar;
+import java.time.LocalDate;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -8,8 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,8 +27,7 @@ public class Contact {
     private Long id;
     private String firstName;
     private String lastName;
-    @Temporal(TemporalType.DATE)
-    private Calendar dateOfBirth;
+    private LocalDate dateOfBirth;
     @OneToOne(cascade = CascadeType.PERSIST)
     private Address address;
 }
