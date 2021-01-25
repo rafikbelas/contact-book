@@ -5,7 +5,9 @@ import java.util.List;
 import com.rafikbelas.demo.model.Contact;
 import com.rafikbelas.demo.service.ContactService;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,8 +26,9 @@ public class ContactController {
     private ContactService contactService;
 
     @GetMapping
-    public List<Contact> getContacts(@RequestParam(required = false) String postalCode) {
-        return contactService.getContacts(postalCode);
+    public ResponseEntity<List<Contact>> getContacts(@RequestParam(required = false) String postalCode) {
+        List<Contact> contacts = contactService.getContacts(postalCode);
+        return ResponseEntity.ok(contacts);
     }
 
     @PostMapping
