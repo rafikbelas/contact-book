@@ -12,8 +12,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class AddressDTO {
-    private String address1;
-    private String address2;
+    private String addressLine;
     private String city;
     private String postalCode;
 }

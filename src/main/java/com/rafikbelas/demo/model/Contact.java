@@ -1,6 +1,7 @@
 package com.rafikbelas.demo.model;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -30,4 +31,12 @@ public class Contact {
     private LocalDate dateOfBirth;
     @OneToOne(cascade = CascadeType.PERSIST)
     private Address address;
+
+	public String getFullName() {
+		return this.firstName + " " + this.lastName;
+	}
+
+	public String getFormattedDateOfBirth() {
+		return this.dateOfBirth.format(DateTimeFormatter.ofPattern("dd LLLL yyyy"));
+	}
 }

@@ -1,6 +1,5 @@
 package com.rafikbelas.demo.controllers;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,16 +79,15 @@ public class ContactController {
     private ContactDTO mapToContactDTO(Contact contact) {
 
         return ContactDTO.builder()
-                .fullName(contact.getFirstName() + " " + contact.getLastName())
-                .dateOfBirth(contact.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd LLLL yyyy")))
+                .fullName(contact.getFullName())
+                .dateOfBirth(contact.getFormattedDateOfBirth())
                 .address(mapToAddressDTO(contact.getAddress()))
                 .build();
     }
 
     private AddressDTO mapToAddressDTO(Address address) {
         return AddressDTO.builder()
-                .address1(address.getAddress1())
-                .address2(address.getAddress2())
+                .addressLine(address.getAddressLine())
                 .city(address.getCity())
                 .postalCode(address.getPostalCode())
                 .build();

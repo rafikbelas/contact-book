@@ -1,5 +1,8 @@
 package com.rafikbelas.demo.model;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,4 +28,10 @@ public class Address {
     private String address2;
     private String city;
     private String postalCode;
+
+	public String getAddressLine() {
+        return Stream.of(this.address1, this.address2)
+            .filter(s -> s != null)
+            .collect(Collectors.joining(", "));
+	}
 }
