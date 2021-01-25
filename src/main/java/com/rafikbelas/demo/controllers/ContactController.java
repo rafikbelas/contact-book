@@ -77,8 +77,7 @@ public class ContactController {
     private ContactDTO mapToContactDTO(Contact contact) {
 
         return ContactDTO.builder()
-                .firstName(contact.getFirstName())
-                .lastName(contact.getLastName())
+                .fullName(contact.getFirstName() + " " + contact.getLastName())
                 .dateOfBirth(contact.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd LLLL yyyy")))
                 .address(mapToAddressDTO(contact.getAddress()))
                 .build();

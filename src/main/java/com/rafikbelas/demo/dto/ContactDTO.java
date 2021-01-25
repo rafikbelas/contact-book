@@ -12,8 +12,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class ContactDTO {
-    private String firstName;
-    private String lastName;
+    private String fullName;
     private String dateOfBirth;
     private AddressDTO address;
 }
