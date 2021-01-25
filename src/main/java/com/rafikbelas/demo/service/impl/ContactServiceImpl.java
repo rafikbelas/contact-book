@@ -21,12 +21,12 @@ public class ContactServiceImpl implements ContactService {
         if (postalCode == null) 
             return contactRepository.findAll();
         else
-            return contactRepository.findByPostalCode(postalCode);
+            return contactRepository.findByAddressPostalCode(postalCode);
     }
 
     @Override
     public void create(Contact contact) {
-        contactRepository.create(contact);
+        contactRepository.save(contact);
     }
     
 }

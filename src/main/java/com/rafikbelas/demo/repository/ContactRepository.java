@@ -4,11 +4,10 @@ import java.util.List;
 
 import com.rafikbelas.demo.model.Contact;
 
-public interface ContactRepository {
-    
-    List<Contact> findAll();
+import org.springframework.data.jpa.repository.JpaRepository;
 
-    List<Contact> findByPostalCode(String postalCode);
+public interface ContactRepository extends JpaRepository<Contact, Long> {
+
+    List<Contact> findByAddressPostalCode(String postalCode);
     
-    void create(Contact contact);
 }
