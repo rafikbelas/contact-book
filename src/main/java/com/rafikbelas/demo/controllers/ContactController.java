@@ -49,10 +49,17 @@ public class ContactController {
 
     private List<ContactDTO> mapToContactDTOs(List<Contact> contacts) {
         return contacts.stream()
-                .map(contact -> ContactDTO.builder().firstName(contact.getFirstName()).lastName(contact.getLastName())
-                        .dateOfBirth(contact.getDateOfBirth().getTime().toString())
-                        .address(mapToAddressDTO(contact.getAddress())).build())
+                .map(contact -> mapToContactDTO(contact))
                 .collect(Collectors.toList());
+    }
+
+    private ContactDTO mapToContactDTO(Contact contact) {
+        return ContactDTO.builder()
+                .firstName(contact.getFirstName())
+                .lastName(contact.getLastName())
+                .dateOfBirth(contact.getDateOfBirth().getTime().toString())
+                .address(mapToAddressDTO(contact.getAddress()))
+                .build();
     }
 
     private AddressDTO mapToAddressDTO(Address address) {
