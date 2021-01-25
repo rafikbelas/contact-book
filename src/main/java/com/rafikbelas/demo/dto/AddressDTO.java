@@ -11,9 +11,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class ContactDTO {
-    private String firstName;
-    private String lastName;
-    private String dateOfBirth;
-    private AddressDTO address;
+public class AddressDTO {
+    private String address1;
+    private String address2;
+    private String city;
+    private String postalCode;
 }

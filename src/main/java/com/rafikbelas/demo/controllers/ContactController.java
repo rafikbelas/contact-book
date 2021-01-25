@@ -3,8 +3,10 @@ package com.rafikbelas.demo.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.rafikbelas.demo.dto.AddressDTO;
 import com.rafikbelas.demo.dto.ContactDTO;
 import com.rafikbelas.demo.dto.ContactsDTO;
+import com.rafikbelas.demo.model.Address;
 import com.rafikbelas.demo.model.Contact;
 import com.rafikbelas.demo.service.ContactService;
 
@@ -47,13 +49,19 @@ public class ContactController {
 
     private List<ContactDTO> mapToContactDTOs(List<Contact> contacts) {
         return contacts.stream()
-                .map(contact -> 
-                ContactDTO.builder()
-                .firstName(contact.getFirstName())
-                .lastName(contact.getLastName())
-                .dateOfBirth(contact.getDateOfBirth().getTime().toString())
-                .build())   
+                .map(contact -> ContactDTO.builder().firstName(contact.getFirstName()).lastName(contact.getLastName())
+                        .dateOfBirth(contact.getDateOfBirth().getTime().toString())
+                        .address(mapToAddressDTO(contact.getAddress())).build())
                 .collect(Collectors.toList());
+    }
+
+    private AddressDTO mapToAddressDTO(Address address) {
+        return AddressDTO.builder()
+                .address1(address.getAddress1())
+                .address2(address.getAddress2())
+                .city(address.getCity())
+                .postalCode(address.getPostalCode())
+                .build();
     }
     
 }
