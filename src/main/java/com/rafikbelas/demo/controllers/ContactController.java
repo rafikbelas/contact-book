@@ -3,7 +3,9 @@ package com.rafikbelas.demo.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.rafikbelas.demo.dto.AddressCreationDTO;
 import com.rafikbelas.demo.dto.AddressDTO;
+import com.rafikbelas.demo.dto.ContactCreationDTO;
 import com.rafikbelas.demo.dto.ContactDTO;
 import com.rafikbelas.demo.dto.ContactsDTO;
 import com.rafikbelas.demo.model.Address;
@@ -38,8 +40,23 @@ public class ContactController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void registerContact(@RequestBody Contact contact) {
-        contactService.create(contact);
+    public void registerContact(@RequestBody ContactCreationDTO contactDTO) {
+        contactService.create(mapToContact(contactDTO));
+    }
+
+    private Contact mapToContact(ContactCreationDTO contactDTO) {
+        return Contact.builder().firstName(contactDTO.getFirstName()).lastName(contactDTO.getLastName())
+                // .dateOfBirth(dateOfBirth)
+                .address(mapToAddress(contactDTO.getAddress())).build();
+    }
+
+    private Address mapToAddress(AddressCreationDTO address) {
+        return Address.builder()
+                .address1(address.getAddress1())
+                .address2(address.getAddress2())
+                .city(address.getCity())
+                .postalCode(address.getPostalCode())
+                .build();
     }
 
     private ContactsDTO mapToContactsDTO(List<Contact> contacts) {
