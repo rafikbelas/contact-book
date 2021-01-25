@@ -1,6 +1,5 @@
 package com.rafikbelas.demo.controllers;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,11 +45,13 @@ public class ContactController {
         contactService.create(mapToContact(contactDTO));
     }
 
+// TODO: replace mappers with MapStruct.
+
     private Contact mapToContact(ContactCreationDTO contactDTO) {
         return Contact.builder()
                 .firstName(contactDTO.getFirstName())
                 .lastName(contactDTO.getLastName())
-                .dateOfBirth(LocalDate.parse(contactDTO.getDateOfBirth()))
+                .dateOfBirth(contactDTO.getDateOfBirth())
                 .address(mapToAddress(contactDTO.getAddress())).build();
     }
 
