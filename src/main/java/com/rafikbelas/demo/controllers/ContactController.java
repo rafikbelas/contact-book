@@ -4,6 +4,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import com.rafikbelas.demo.dto.AddressCreationDTO;
 import com.rafikbelas.demo.dto.AddressDTO;
 import com.rafikbelas.demo.dto.ContactCreationDTO;
@@ -41,7 +43,7 @@ public class ContactController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void registerContact(@RequestBody ContactCreationDTO contactDTO) {
+    public void registerContact(@RequestBody @Valid ContactCreationDTO contactDTO) {
         contactService.create(mapToContact(contactDTO));
     }
 
