@@ -1,4 +1,4 @@
-package com.rafikbelas.demo.controllers;
+package com.rafikbelas.demo.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
