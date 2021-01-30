@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.rafikbelas.demo.model.Address;
 import com.rafikbelas.demo.model.Contact;
@@ -34,22 +35,40 @@ public class ContactControllerTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        Address address = Address.builder().address1("Rue des joviales").city("Paris").postalCode("75000").build();
-        Contact contact = Contact.builder().id(1L).firstName("John").lastName("Doe")
-                .dateOfBirth(LocalDate.of(1994, 06, 01)).address(address).build();
-        contacts.add(contact);
+        Address address1 = Address.builder().address1("Rue des joviales").city("Paris").postalCode("73000").build();
+        Contact contact1 = Contact.builder().id(1L).firstName("John").lastName("Doe")
+                .dateOfBirth(LocalDate.of(1994, 06, 01)).address(address1).build();
+        Address address2 = Address.builder().address1("Rue Vieux Port").city("Marseille").postalCode("75000").build();
+        Contact contact2 = Contact.builder().id(1L).firstName("Jane").lastName("Browns")
+                .dateOfBirth(LocalDate.of(1994, 06, 01)).address(address2).build();
+        contacts.add(contact1);
+        contacts.add(contact2);
     }
-
+    
     @Test
     public void givenContacts_whenGetContacts_thenReturnJsonObjectOfContacts() throws Exception {
         doReturn(contacts).when(contactService).getContacts(null);
         mock.perform(get("/contacts")
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.contacts").isArray())
+        .andExpect(jsonPath("$.contacts").isNotEmpty())
+        .andExpect(jsonPath("$.contacts[*].fullName").isNotEmpty())
+        .andExpect(jsonPath("$.contacts[*].dateOfBirth").isNotEmpty())
+        .andExpect(jsonPath("$.contacts[*].address.addressLine").isNotEmpty())
+        .andExpect(jsonPath("$.contacts[*].address.city").isNotEmpty())
+        .andExpect(jsonPath("$.contacts[*].address.postalCode").isNotEmpty());
+    }
+    
+    @Test
+    public void givenContacts_whenGetContactsByPostalCode_thenReturnOnlyJsonObjectOfContactsWithThisPostalCode() throws Exception {
+        String postalCode = "75000";
+        List<Contact> filteredContacts = contacts.stream().filter(contact -> contact.getAddress().getPostalCode().equals("75000")).collect(Collectors.toList());
+        doReturn(filteredContacts).when(contactService).getContacts(postalCode);
+        mock.perform(get("/contacts?postalCode={postalCode}", postalCode)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.contacts[0].fullName").value("John Doe"))
-            .andExpect(jsonPath("$.contacts[0].address.addressLine").value("Rue des joviales"))
-            .andExpect(jsonPath("$.contacts[0].address.city").value("Paris"))
-            .andExpect(jsonPath("$.contacts[0].address.postalCode").value("75000"));
+            .andExpect(jsonPath("$.contacts[*].address.postalCode").value(postalCode));
     }
 
 }
