@@ -61,6 +61,15 @@ public class ContactControllerTest {
     }
     
     @Test
+    public void givenNoContact_whenGetContactsByPostalCode_thenReturnJsonObjectWithEmptyArray() throws Exception {
+        doReturn(new ArrayList<>()).when(contactService).getContacts(null);
+        mock.perform(get("/contacts").contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.contacts").isArray())
+            .andExpect(jsonPath("$.contacts").isEmpty());
+    }
+
+    @Test
     public void givenContacts_whenGetContactsByPostalCode_thenReturnOnlyJsonObjectOfContactsWithThisPostalCode() throws Exception {
         String postalCode = "75000";
         List<Contact> filteredContacts = contacts.stream().filter(contact -> contact.getAddress().getPostalCode().equals("75000")).collect(Collectors.toList());
