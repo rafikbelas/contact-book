@@ -1,6 +1,7 @@
 package com.rafikbelas.demo.controller;
 
 import static org.mockito.Mockito.doReturn;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -19,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = ContactController.class)
@@ -44,40 +44,38 @@ public class ContactControllerTest {
         contacts.add(contact1);
         contacts.add(contact2);
     }
-    
+
     @Test
     public void givenContacts_whenGetContacts_thenReturnJsonObjectOfContacts() throws Exception {
         doReturn(contacts).when(contactService).getContacts(null);
-        mock.perform(get("/contacts")
-        .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.contacts").isArray())
-        .andExpect(jsonPath("$.contacts").isNotEmpty())
-        .andExpect(jsonPath("$.contacts[*].fullName").isNotEmpty())
-        .andExpect(jsonPath("$.contacts[*].dateOfBirth").isNotEmpty())
-        .andExpect(jsonPath("$.contacts[*].address.addressLine").isNotEmpty())
-        .andExpect(jsonPath("$.contacts[*].address.city").isNotEmpty())
-        .andExpect(jsonPath("$.contacts[*].address.postalCode").isNotEmpty());
-    }
-    
-    @Test
-    public void givenNoContact_whenGetContactsByPostalCode_thenReturnJsonObjectWithEmptyArray() throws Exception {
-        doReturn(new ArrayList<>()).when(contactService).getContacts(null);
-        mock.perform(get("/contacts").contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.contacts").isArray())
-            .andExpect(jsonPath("$.contacts").isEmpty());
+
+        mock.perform(get("/contacts").contentType(APPLICATION_JSON)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.contacts").isArray()).andExpect(jsonPath("$.contacts").isNotEmpty())
+                .andExpect(jsonPath("$.contacts[*].fullName").isNotEmpty())
+                .andExpect(jsonPath("$.contacts[*].dateOfBirth").isNotEmpty())
+                .andExpect(jsonPath("$.contacts[*].address.addressLine").isNotEmpty())
+                .andExpect(jsonPath("$.contacts[*].address.city").isNotEmpty())
+                .andExpect(jsonPath("$.contacts[*].address.postalCode").isNotEmpty());
     }
 
     @Test
-    public void givenContacts_whenGetContactsByPostalCode_thenReturnOnlyJsonObjectOfContactsWithThisPostalCode() throws Exception {
+    public void givenNoContact_whenGetContactsByPostalCode_thenReturnJsonObjectWithEmptyArray() throws Exception {
+        doReturn(new ArrayList<>()).when(contactService).getContacts(null);
+
+        mock.perform(get("/contacts").contentType(APPLICATION_JSON)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.contacts").isArray()).andExpect(jsonPath("$.contacts").isEmpty());
+    }
+
+    @Test
+    public void givenContacts_whenGetContactsByPostalCode_thenReturnOnlyJsonObjectOfContactsWithThisPostalCode()
+            throws Exception {
         String postalCode = "75000";
-        List<Contact> filteredContacts = contacts.stream().filter(contact -> contact.getAddress().getPostalCode().equals("75000")).collect(Collectors.toList());
+        List<Contact> filteredContacts = contacts.stream()
+                .filter(contact -> contact.getAddress().getPostalCode().equals("75000")).collect(Collectors.toList());
         doReturn(filteredContacts).when(contactService).getContacts(postalCode);
-        mock.perform(get("/contacts?postalCode={postalCode}", postalCode)
-            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.contacts[*].address.postalCode").value(postalCode));
+
+        mock.perform(get("/contacts?postalCode={postalCode}", postalCode).contentType(APPLICATION_JSON))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.contacts[*].address.postalCode").value(postalCode));
     }
 
 }
