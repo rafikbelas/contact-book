@@ -91,11 +91,7 @@ public class ContactControllerTest {
 
     @Test
     void whenValidInput_thenRegisterContactReturns200() throws Exception {
-
-        AddressCreationDTO addressCreationDTO = AddressCreationDTO.builder().address1("Rue Matoub Lounes")
-                .city("Nantes").postalCode("69000").build();
-        ContactCreationDTO contactCreationDTO = ContactCreationDTO.builder().firstName("James").lastName("Wilson")
-                .dateOfBirth(LocalDate.of(1992, 03, 05)).address(addressCreationDTO).build();
+        ContactCreationDTO contactCreationDTO = createValidContactCreationDTO();
 
         mock.perform(post("/contacts").contentType(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(contactCreationDTO)))
@@ -104,8 +100,8 @@ public class ContactControllerTest {
 
     @Test
     void whenInvalidInput_thenRegisterContactReturns400() throws Exception {
-        ContactCreationDTO contactCreationDTO = ContactCreationDTO.builder().firstName("James").lastName("Wilson")
-                .dateOfBirth(LocalDate.of(1992, 03, 05)).address(null).build();
+        ContactCreationDTO contactCreationDTO = createInvalidContactCreationDTO();
+
         mock.perform(post("/contacts").contentType(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(contactCreationDTO)))
                 .andExpect(status().isBadRequest());
@@ -113,10 +109,7 @@ public class ContactControllerTest {
 
     @Test
     void whenValidInput_thenMapsToBusinessModel() throws Exception {
-        AddressCreationDTO addressCreationDTO = AddressCreationDTO.builder().address1("Rue Matoub Lounes")
-                .city("Nantes").postalCode("69000").build();
-        ContactCreationDTO contactCreationDTO = ContactCreationDTO.builder().firstName("James").lastName("Wilson")
-                .dateOfBirth(LocalDate.of(1992, 03, 05)).address(addressCreationDTO).build();
+        ContactCreationDTO contactCreationDTO = createValidContactCreationDTO();
 
         mock.perform(post("/contacts").contentType(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(contactCreationDTO)));
@@ -126,13 +119,37 @@ public class ContactControllerTest {
         
         Contact contact = contactCaptor.getValue();
         Address address = contact.getAddress();
+
         assertEquals(contact.getFirstName(), contactCreationDTO.getFirstName());
         assertEquals(contact.getLastName(), contactCreationDTO.getLastName());
         assertEquals(contact.getDateOfBirth(), contactCreationDTO.getDateOfBirth());
-        
+ 
+        AddressCreationDTO addressCreationDTO = contactCreationDTO.getAddress();
         assertEquals(address.getCity(), addressCreationDTO.getCity());
         assertEquals(address.getPostalCode(), addressCreationDTO.getPostalCode());
         assertEquals(address.getAddress1(), addressCreationDTO.getAddress1());
         assertEquals(address.getAddress2(), addressCreationDTO.getAddress2());
+    }
+
+    private ContactCreationDTO createInvalidContactCreationDTO() {
+        ContactCreationDTO contactCreationDTO = createContactCreationDTO(null);
+        return contactCreationDTO;
+    }
+
+    private ContactCreationDTO createValidContactCreationDTO() {
+        AddressCreationDTO addressCreationDTO = createValidAddressCreationDTO();
+        ContactCreationDTO contactCreationDTO = createContactCreationDTO(addressCreationDTO);
+        return contactCreationDTO;
+    }
+
+    private ContactCreationDTO createContactCreationDTO(AddressCreationDTO addressCreationDTO) {
+        ContactCreationDTO contactCreationDTO = ContactCreationDTO.builder().firstName("James").lastName("Wilson")
+                .dateOfBirth(LocalDate.of(1992, 03, 05)).address(addressCreationDTO).build();
+        return contactCreationDTO;
+    }
+
+    private AddressCreationDTO createValidAddressCreationDTO() {
+        return AddressCreationDTO.builder().address1("Rue Matoub Lounes")
+                .city("Nantes").postalCode("69000").build();
     }
 }
