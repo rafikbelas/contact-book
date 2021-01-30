@@ -97,4 +97,13 @@ public class ContactControllerTest {
                 .content(objectMapper.writeValueAsString(contactCreationDTO)))
                 .andExpect(status().isCreated());
     }
+
+    @Test
+    public void whenInvalidInput_thenRegisterContactReturns400() throws Exception {
+        ContactCreationDTO contactCreationDTO = ContactCreationDTO.builder().firstName("James").lastName("Wilson")
+                .dateOfBirth(LocalDate.of(1992, 03, 05)).address(null).build();
+        mock.perform(post("/contacts").contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(contactCreationDTO)))
+                .andExpect(status().isBadRequest());
+    }
 }
