@@ -8,5 +8,5 @@ public interface ContactService {
 
     List<Contact> getContacts(String postalCode);
 
-    void create(Contact contact);
+    Contact create(Contact contact);
 }

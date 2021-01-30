@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import com.rafikbelas.demo.dto.ContactCreationDTO;
+import com.rafikbelas.demo.dto.ContactDTO;
 import com.rafikbelas.demo.dto.ContactsDTO;
 import com.rafikbelas.demo.mapper.ContactMapper;
 import com.rafikbelas.demo.model.Contact;
@@ -38,8 +39,9 @@ public class ContactController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void registerContact(@RequestBody @Valid ContactCreationDTO contactDTO) {
-        contactService.create(ContactMapper.mapToContact(contactDTO));
+    public ResponseEntity<ContactDTO> registerContact(@RequestBody @Valid ContactCreationDTO contactDTO) {
+        Contact createdContact = contactService.create(ContactMapper.mapToContact(contactDTO));
+        return new ResponseEntity<>(ContactMapper.mapToContactDTO(createdContact), HttpStatus.CREATED);
     }
     
 }

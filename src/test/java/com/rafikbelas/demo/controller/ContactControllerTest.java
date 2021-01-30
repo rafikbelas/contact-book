@@ -1,4 +1,4 @@
-package com.rafikbelas.demo.controller;
+ package com.rafikbelas.demo.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rafikbelas.demo.dto.AddressCreationDTO;
 import com.rafikbelas.demo.dto.ContactCreationDTO;
+import com.rafikbelas.demo.dto.ContactDTO;
+import com.rafikbelas.demo.mapper.ContactMapper;
 import com.rafikbelas.demo.model.Address;
 import com.rafikbelas.demo.model.Contact;
 import com.rafikbelas.demo.service.ContactService;
@@ -25,10 +27,12 @@ import com.rafikbelas.demo.service.ContactService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(controllers = ContactController.class)
@@ -93,6 +97,8 @@ public class ContactControllerTest {
     @Test
     void whenValidInput_thenRegisterContactReturns201() throws Exception {
         ContactCreationDTO contactCreationDTO = createValidContactCreationDTO();
+        Contact contact = ContactMapper.mapToContact(contactCreationDTO);
+        doReturn(contact).when(contactService).create(ArgumentMatchers.any(Contact.class));
 
         performPost(contactCreationDTO).andExpect(status().isCreated());
     }
@@ -107,24 +113,39 @@ public class ContactControllerTest {
     @Test
     void whenValidInput_thenMapsToBusinessModel() throws Exception {
         ContactCreationDTO contactCreationDTO = createValidContactCreationDTO();
+        Contact contact = ContactMapper.mapToContact(contactCreationDTO);
+        doReturn(contact).when(contactService).create(ArgumentMatchers.any(Contact.class));
 
         performPost(contactCreationDTO);
 
         ArgumentCaptor<Contact> contactCaptor = ArgumentCaptor.forClass(Contact.class);
         verify(contactService, times(1)).create(contactCaptor.capture());
         
-        Contact contact = contactCaptor.getValue();
-        Address address = contact.getAddress();
+        Contact capturedContact = contactCaptor.getValue();
+        Address address = capturedContact.getAddress();
 
-        assertEquals(contact.getFirstName(), contactCreationDTO.getFirstName());
-        assertEquals(contact.getLastName(), contactCreationDTO.getLastName());
-        assertEquals(contact.getDateOfBirth(), contactCreationDTO.getDateOfBirth());
+        assertEquals(capturedContact.getFirstName(), contactCreationDTO.getFirstName());
+        assertEquals(capturedContact.getLastName(), contactCreationDTO.getLastName());
+        assertEquals(capturedContact.getDateOfBirth(), contactCreationDTO.getDateOfBirth());
  
         AddressCreationDTO addressCreationDTO = contactCreationDTO.getAddress();
         assertEquals(address.getCity(), addressCreationDTO.getCity());
         assertEquals(address.getPostalCode(), addressCreationDTO.getPostalCode());
         assertEquals(address.getAddress1(), addressCreationDTO.getAddress1());
         assertEquals(address.getAddress2(), addressCreationDTO.getAddress2());
+    }
+
+    @Test
+    void whenValidInput_thenReturnsContactDTO() throws Exception {
+        ContactCreationDTO contactCreationDTO = createValidContactCreationDTO();
+        Contact contact = ContactMapper.mapToContact(contactCreationDTO);
+        doReturn(contact).when(contactService).create(ArgumentMatchers.any(Contact.class));
+
+        MvcResult mvcResult = performPost(contactCreationDTO).andReturn();
+
+        ContactDTO expectedResponseBody = ContactMapper.mapToContactDTO(contact);
+        String actualResponseBody = mvcResult.getResponse().getContentAsString();
+        assertEquals(objectMapper.writeValueAsString(expectedResponseBody), actualResponseBody);
     }
 
     private ContactCreationDTO createInvalidContactCreationDTO() {

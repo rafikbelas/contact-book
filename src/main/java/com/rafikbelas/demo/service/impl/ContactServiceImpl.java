@@ -25,8 +25,8 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public void create(Contact contact) {
-        contactRepository.save(contact);
+    public Contact create(Contact contact) {
+        return contactRepository.save(contact);
     }
     
 }
