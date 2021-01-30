@@ -3,6 +3,7 @@ package com.rafikbelas.demo.controller;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -11,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rafikbelas.demo.dto.AddressCreationDTO;
+import com.rafikbelas.demo.dto.ContactCreationDTO;
 import com.rafikbelas.demo.model.Address;
 import com.rafikbelas.demo.model.Contact;
 import com.rafikbelas.demo.service.ContactService;
@@ -27,6 +31,9 @@ public class ContactControllerTest {
 
     @Autowired
     private MockMvc mock;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockBean
     private ContactService contactService;
@@ -78,4 +85,16 @@ public class ContactControllerTest {
                 .andExpect(status().isOk()).andExpect(jsonPath("$.contacts[*].address.postalCode").value(postalCode));
     }
 
+    @Test
+    public void whenValidInput_thenRegisterContactReturns200() throws Exception {
+
+        AddressCreationDTO addressCreationDTO = AddressCreationDTO.builder().address1("Rue Matoub Lounes")
+                .city("Nantes").postalCode("69000").build();
+        ContactCreationDTO contactCreationDTO = ContactCreationDTO.builder().firstName("James").lastName("Wilson")
+                .dateOfBirth(LocalDate.of(1992, 03, 05)).address(addressCreationDTO).build();
+
+        mock.perform(post("/contacts").contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(contactCreationDTO)))
+                .andExpect(status().isCreated());
+    }
 }
