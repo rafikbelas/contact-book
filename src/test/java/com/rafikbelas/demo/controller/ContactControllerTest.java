@@ -35,11 +35,11 @@ public class ContactControllerTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        Address address1 = Address.builder().address1("Rue des joviales").city("Paris").postalCode("73000").build();
+        Address address1 = Address.builder().address1("Rue des joviales").city("Paris").postalCode("75000").build();
         Contact contact1 = Contact.builder().id(1L).firstName("John").lastName("Doe")
-                .dateOfBirth(LocalDate.of(1994, 06, 01)).address(address1).build();
-        Address address2 = Address.builder().address1("Rue Vieux Port").city("Marseille").postalCode("75000").build();
-        Contact contact2 = Contact.builder().id(1L).firstName("Jane").lastName("Browns")
+                .dateOfBirth(LocalDate.of(1995, 07, 02)).address(address1).build();
+        Address address2 = Address.builder().address1("Rue Vieux Port").city("Marseille").postalCode("13000").build();
+        Contact contact2 = Contact.builder().id(2L).firstName("Jane").lastName("Browns")
                 .dateOfBirth(LocalDate.of(1994, 06, 01)).address(address2).build();
         contacts.add(contact1);
         contacts.add(contact2);
