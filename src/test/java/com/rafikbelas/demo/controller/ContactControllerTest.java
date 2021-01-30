@@ -91,7 +91,7 @@ public class ContactControllerTest {
     }
 
     @Test
-    void whenValidInput_thenRegisterContactReturns200() throws Exception {
+    void whenValidInput_thenRegisterContactReturns201() throws Exception {
         ContactCreationDTO contactCreationDTO = createValidContactCreationDTO();
 
         performPost(contactCreationDTO).andExpect(status().isCreated());
