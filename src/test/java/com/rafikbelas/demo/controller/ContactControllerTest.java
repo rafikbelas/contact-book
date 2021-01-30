@@ -41,7 +41,7 @@ public class ContactControllerTest {
     List<Contact> contacts = new ArrayList<>();
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         Address address1 = Address.builder().address1("Rue des joviales").city("Paris").postalCode("75000").build();
         Contact contact1 = Contact.builder().id(1L).firstName("John").lastName("Doe")
                 .dateOfBirth(LocalDate.of(1995, 07, 02)).address(address1).build();
@@ -53,7 +53,7 @@ public class ContactControllerTest {
     }
 
     @Test
-    public void givenContacts_whenGetContacts_thenReturnJsonObjectOfContacts() throws Exception {
+    void givenContacts_whenGetContacts_thenReturnJsonObjectOfContacts() throws Exception {
         doReturn(contacts).when(contactService).getContacts(null);
 
         mock.perform(get("/contacts").contentType(APPLICATION_JSON)).andExpect(status().isOk())
@@ -66,7 +66,7 @@ public class ContactControllerTest {
     }
 
     @Test
-    public void givenNoContact_whenGetContactsByPostalCode_thenReturnJsonObjectWithEmptyArray() throws Exception {
+    void givenNoContact_whenGetContactsByPostalCode_thenReturnJsonObjectWithEmptyArray() throws Exception {
         doReturn(new ArrayList<>()).when(contactService).getContacts(null);
 
         mock.perform(get("/contacts").contentType(APPLICATION_JSON)).andExpect(status().isOk())
@@ -74,7 +74,7 @@ public class ContactControllerTest {
     }
 
     @Test
-    public void givenContacts_whenGetContactsByPostalCode_thenReturnOnlyJsonObjectOfContactsWithThisPostalCode()
+    void givenContacts_whenGetContactsByPostalCode_thenReturnOnlyJsonObjectOfContactsWithThisPostalCode()
             throws Exception {
         String postalCode = "75000";
         List<Contact> filteredContacts = contacts.stream()
@@ -86,7 +86,7 @@ public class ContactControllerTest {
     }
 
     @Test
-    public void whenValidInput_thenRegisterContactReturns200() throws Exception {
+    void whenValidInput_thenRegisterContactReturns200() throws Exception {
 
         AddressCreationDTO addressCreationDTO = AddressCreationDTO.builder().address1("Rue Matoub Lounes")
                 .city("Nantes").postalCode("69000").build();
@@ -99,11 +99,12 @@ public class ContactControllerTest {
     }
 
     @Test
-    public void whenInvalidInput_thenRegisterContactReturns400() throws Exception {
+    void whenInvalidInput_thenRegisterContactReturns400() throws Exception {
         ContactCreationDTO contactCreationDTO = ContactCreationDTO.builder().firstName("James").lastName("Wilson")
                 .dateOfBirth(LocalDate.of(1992, 03, 05)).address(null).build();
         mock.perform(post("/contacts").contentType(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(contactCreationDTO)))
                 .andExpect(status().isBadRequest());
     }
+
 }
