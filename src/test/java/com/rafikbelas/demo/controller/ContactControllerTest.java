@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(controllers = ContactController.class)
 public class ContactControllerTest {
@@ -60,8 +61,8 @@ public class ContactControllerTest {
     void givenContacts_whenGetContacts_thenReturnJsonObjectOfContacts() throws Exception {
         doReturn(contacts).when(contactService).getContacts(null);
 
-        mock.perform(get("/contacts").contentType(APPLICATION_JSON)).andExpect(status().isOk())
-                .andExpect(jsonPath("$.contacts").isArray()).andExpect(jsonPath("$.contacts").isNotEmpty())
+        performGet().andExpect(status().isOk()).andExpect(jsonPath("$.contacts").isArray())
+                .andExpect(jsonPath("$.contacts").isNotEmpty())
                 .andExpect(jsonPath("$.contacts[*].fullName").isNotEmpty())
                 .andExpect(jsonPath("$.contacts[*].dateOfBirth").isNotEmpty())
                 .andExpect(jsonPath("$.contacts[*].address.addressLine").isNotEmpty())
@@ -73,7 +74,7 @@ public class ContactControllerTest {
     void givenNoContact_whenGetContactsByPostalCode_thenReturnJsonObjectWithEmptyArray() throws Exception {
         doReturn(new ArrayList<>()).when(contactService).getContacts(null);
 
-        mock.perform(get("/contacts").contentType(APPLICATION_JSON)).andExpect(status().isOk())
+        performGet().andExpect(status().isOk())
                 .andExpect(jsonPath("$.contacts").isArray()).andExpect(jsonPath("$.contacts").isEmpty());
     }
 
@@ -85,34 +86,29 @@ public class ContactControllerTest {
                 .filter(contact -> contact.getAddress().getPostalCode().equals("75000")).collect(Collectors.toList());
         doReturn(filteredContacts).when(contactService).getContacts(postalCode);
 
-        mock.perform(get("/contacts?postalCode={postalCode}", postalCode).contentType(APPLICATION_JSON))
-                .andExpect(status().isOk()).andExpect(jsonPath("$.contacts[*].address.postalCode").value(postalCode));
+        performGet(postalCode).andExpect(status().isOk())
+                .andExpect(jsonPath("$.contacts[*].address.postalCode").value(postalCode));
     }
 
     @Test
     void whenValidInput_thenRegisterContactReturns200() throws Exception {
         ContactCreationDTO contactCreationDTO = createValidContactCreationDTO();
 
-        mock.perform(post("/contacts").contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(contactCreationDTO)))
-                .andExpect(status().isCreated());
+        performPost(contactCreationDTO).andExpect(status().isCreated());
     }
 
     @Test
     void whenInvalidInput_thenRegisterContactReturns400() throws Exception {
         ContactCreationDTO contactCreationDTO = createInvalidContactCreationDTO();
 
-        mock.perform(post("/contacts").contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(contactCreationDTO)))
-                .andExpect(status().isBadRequest());
+        performPost(contactCreationDTO).andExpect(status().isBadRequest());
     }
 
     @Test
     void whenValidInput_thenMapsToBusinessModel() throws Exception {
         ContactCreationDTO contactCreationDTO = createValidContactCreationDTO();
 
-        mock.perform(post("/contacts").contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(contactCreationDTO)));
+        performPost(contactCreationDTO);
 
         ArgumentCaptor<Contact> contactCaptor = ArgumentCaptor.forClass(Contact.class);
         verify(contactService, times(1)).create(contactCaptor.capture());
@@ -149,7 +145,19 @@ public class ContactControllerTest {
     }
 
     private AddressCreationDTO createValidAddressCreationDTO() {
-        return AddressCreationDTO.builder().address1("Rue Matoub Lounes")
-                .city("Nantes").postalCode("69000").build();
+        return AddressCreationDTO.builder().address1("Rue Matoub Lounes").city("Nantes").postalCode("69000").build();
+    }
+
+    private ResultActions performGet() throws Exception {
+        return mock.perform(get("/contacts").contentType(APPLICATION_JSON));
+    }
+
+    private ResultActions performGet(String postalCode) throws Exception {
+        return mock.perform(get("/contacts?postalCode={postalCode}", postalCode).contentType(APPLICATION_JSON));
+    }
+
+    private ResultActions performPost(ContactCreationDTO contactCreationDTO) throws Exception {
+        return mock.perform(post("/contacts").contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(contactCreationDTO)));
     }
 }
