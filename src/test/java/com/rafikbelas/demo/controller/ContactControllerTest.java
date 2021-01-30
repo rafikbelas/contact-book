@@ -1,6 +1,9 @@
 package com.rafikbelas.demo.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -21,6 +24,7 @@ import com.rafikbelas.demo.service.ContactService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -107,4 +111,28 @@ public class ContactControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void whenValidInput_thenMapsToBusinessModel() throws Exception {
+        AddressCreationDTO addressCreationDTO = AddressCreationDTO.builder().address1("Rue Matoub Lounes")
+                .city("Nantes").postalCode("69000").build();
+        ContactCreationDTO contactCreationDTO = ContactCreationDTO.builder().firstName("James").lastName("Wilson")
+                .dateOfBirth(LocalDate.of(1992, 03, 05)).address(addressCreationDTO).build();
+
+        mock.perform(post("/contacts").contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(contactCreationDTO)));
+
+        ArgumentCaptor<Contact> contactCaptor = ArgumentCaptor.forClass(Contact.class);
+        verify(contactService, times(1)).create(contactCaptor.capture());
+        
+        Contact contact = contactCaptor.getValue();
+        Address address = contact.getAddress();
+        assertEquals(contact.getFirstName(), contactCreationDTO.getFirstName());
+        assertEquals(contact.getLastName(), contactCreationDTO.getLastName());
+        assertEquals(contact.getDateOfBirth(), contactCreationDTO.getDateOfBirth());
+        
+        assertEquals(address.getCity(), addressCreationDTO.getCity());
+        assertEquals(address.getPostalCode(), addressCreationDTO.getPostalCode());
+        assertEquals(address.getAddress1(), addressCreationDTO.getAddress1());
+        assertEquals(address.getAddress2(), addressCreationDTO.getAddress2());
+    }
 }
