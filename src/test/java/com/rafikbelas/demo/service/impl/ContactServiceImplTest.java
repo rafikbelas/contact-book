@@ -29,10 +29,12 @@ class ContactServiceImplTest {
     private ContactRepository contactRepository;
 
     List<Contact> contacts = new ArrayList<>();
-    String postalCode = "75000";
+    String postalCode;
 
     @BeforeEach
     void setUp() {
+        postalCode = "75000";
+
         Address address1 = Address.builder().address1("Rue des joviales").city("Paris").postalCode("75000").build();
         Contact contact1 = Contact.builder().id(1L).firstName("John").lastName("Doe")
                 .dateOfBirth(LocalDate.of(1995, 07, 02)).address(address1).build();
