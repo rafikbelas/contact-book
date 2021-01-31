@@ -89,16 +89,16 @@ class ContactServiceImplTest {
         assertIterableEquals(contacts, getContacts());
     }
 
-    private void stubFindByAddressPostalCode() {
-        doReturn(contacts).when(contactRepository).findByAddressPostalCode(postalCode);
-    }
-
     @Test
     void givenNoContactAndPostalCodeIsNotNull_getContactsReturnsNull() throws Exception {
         contacts = null;
         stubFindByAddressPostalCode();
 
         assertIterableEquals(contacts, getContacts());
+    }
+
+    private void stubFindByAddressPostalCode() {
+        doReturn(contacts).when(contactRepository).findByAddressPostalCode(postalCode);
     }
 
     private List<Contact> getContacts() {
