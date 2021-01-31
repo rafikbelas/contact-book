@@ -1,5 +1,6 @@
 package com.rafikbelas.demo.service.impl;
 
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.mockito.Mockito.doReturn;
 
 import java.time.LocalDate;
@@ -11,7 +12,6 @@ import com.rafikbelas.demo.model.Address;
 import com.rafikbelas.demo.model.Contact;
 import com.rafikbelas.demo.repository.ContactRepository;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,15 +21,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class ContactServiceImplTest {
-    
+
     @InjectMocks
     private ContactServiceImpl contactService;
 
     @Mock
     private ContactRepository contactRepository;
-    
+
     List<Contact> contacts = new ArrayList<>();
-    
+    String postalCode = "75000";
+
     @BeforeEach
     void setUp() {
         Address address1 = Address.builder().address1("Rue des joviales").city("Paris").postalCode("75000").build();
@@ -43,42 +44,57 @@ class ContactServiceImplTest {
     }
 
     @Test
-    void givenContacts_getContactsReturnsAllContacts() throws Exception {
-        doReturn(contacts).when(contactRepository).findAll();
-        
-        List<Contact> actualContacts = contactService.getContacts(null);
+    void givenContactsAndPostalCodeIsNull_getContactsReturnsAllContacts() throws Exception {
+        postalCode = null;
+        stubFindAll();
 
-        Assertions.assertIterableEquals(contacts, actualContacts);
+        assertIterableEquals(contacts, getContacts());
     }
 
     @Test
-    void givenNoContact_getContactsReturnsNull() throws Exception {
-        doReturn(null).when(contactRepository).findAll();
+    void givenContactsAndPostalCodeIsEmpty_getContactsReturnsAllContacts() throws Exception {
+        postalCode = "";
+        stubFindAll();
 
-        List<Contact> actualContacts = contactService.getContacts(null);
+        assertIterableEquals(contacts, getContacts());
+    }
 
-        Assertions.assertIterableEquals(null, actualContacts);
+    @Test
+    void givenNoContactAndPostalCodeIsNullOrEmpty_getContactsReturnsNull() throws Exception {
+        postalCode = null;
+        contacts = null;
+        stubFindAll();
+
+        assertIterableEquals(contacts, getContacts());
+    }
+
+    private void stubFindAll() {
+        doReturn(contacts).when(contactRepository).findAll();
     }
 
     @Test
     void givenContactsAndPostalCodeIsNotNull_getContactsReturnsContactsFromPostalCode() throws Exception {
-        String postalCode = "75000";
-        List<Contact> filteredContacts = contacts.stream()
-                .filter(contact -> contact.getAddress().getPostalCode().equals(postalCode)).collect(Collectors.toList());
-        doReturn(filteredContacts).when(contactRepository).findByAddressPostalCode(postalCode);
+        contacts = contacts.stream()
+                .filter(contact -> postalCode.equals(contact.getAddress().getPostalCode()))
+                .collect(Collectors.toList());
+        stubFindByAddressPostalCode();
 
-        List<Contact> actualContacts = contactService.getContacts(postalCode);
+        assertIterableEquals(contacts, getContacts());
+    }
 
-        Assertions.assertIterableEquals(filteredContacts, actualContacts);
+    private void stubFindByAddressPostalCode() {
+        doReturn(contacts).when(contactRepository).findByAddressPostalCode(postalCode);
     }
 
     @Test
     void givenNoContactAndPostalCodeIsNotNull_getContactsReturnsNull() throws Exception {
-        String postalCode = "75000";
-        doReturn(null).when(contactRepository).findByAddressPostalCode(postalCode);
+        contacts = null;
+        stubFindByAddressPostalCode();
 
-        List<Contact> actualContacts = contactService.getContacts(postalCode);
+        assertIterableEquals(contacts, getContacts());
+    }
 
-        Assertions.assertIterableEquals(null, actualContacts);
+    private List<Contact> getContacts() {
+        return contactService.getContacts(postalCode);
     }
 }
