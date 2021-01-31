@@ -87,7 +87,7 @@ public class ContactControllerTest {
             throws Exception {
         String postalCode = "75000";
         List<Contact> filteredContacts = contacts.stream()
-                .filter(contact -> contact.getAddress().getPostalCode().equals("75000")).collect(Collectors.toList());
+                .filter(contact -> contact.getAddress().getPostalCode().equals(postalCode)).collect(Collectors.toList());
         doReturn(filteredContacts).when(contactService).getContacts(postalCode);
 
         performGet(postalCode).andExpect(status().isOk())
