@@ -50,4 +50,12 @@ class ContactServiceImplTest {
         Assertions.assertIterableEquals(contacts, actualContacts);
     }
 
+    @Test
+    void givenNoContact_getContactsReturnsNull() throws Exception {
+        doReturn(null).when(contactRepository).findAll();
+
+        List<Contact> actualContacts = contactService.getContacts(null);
+
+        Assertions.assertIterableEquals(null, actualContacts);
+    }
 }
