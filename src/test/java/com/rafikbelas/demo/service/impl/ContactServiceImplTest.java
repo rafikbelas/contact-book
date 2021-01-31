@@ -5,6 +5,7 @@ import static org.mockito.Mockito.doReturn;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.rafikbelas.demo.model.Address;
 import com.rafikbelas.demo.model.Contact;
@@ -57,5 +58,17 @@ class ContactServiceImplTest {
         List<Contact> actualContacts = contactService.getContacts(null);
 
         Assertions.assertIterableEquals(null, actualContacts);
+    }
+
+    @Test
+    void givenContactsAndPostalCodeIsNotNull_getContactsReturnsContactsFromPostalCode() throws Exception {
+        String postalCode = "75000";
+        List<Contact> filteredContacts = contacts.stream()
+                .filter(contact -> contact.getAddress().getPostalCode().equals(postalCode)).collect(Collectors.toList());
+        doReturn(filteredContacts).when(contactRepository).findByAddressPostalCode(postalCode);
+
+        List<Contact> actualContacts = contactService.getContacts(postalCode);
+
+        Assertions.assertIterableEquals(filteredContacts, actualContacts);
     }
 }
