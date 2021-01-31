@@ -39,8 +39,13 @@ class ContactServiceImplTest {
         Address address2 = Address.builder().address1("Rue Vieux Port").city("Marseille").postalCode("13000").build();
         Contact contact2 = Contact.builder().id(2L).firstName("Jane").lastName("Browns")
                 .dateOfBirth(LocalDate.of(1994, 06, 01)).address(address2).build();
+        Address address3 = Address.builder().address1("Rue Vieux Port").city("Marseille").postalCode("13000").build();
+        Contact contact3 = Contact.builder().id(3L).firstName("Jane").lastName("Browns")
+                .dateOfBirth(LocalDate.of(1994, 06, 01)).address(address3).build();
+        
         contacts.add(contact1);
         contacts.add(contact2);
+        contacts.add(contact3);
     }
 
     @Test
