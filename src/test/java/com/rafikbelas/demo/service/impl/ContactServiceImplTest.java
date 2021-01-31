@@ -71,4 +71,14 @@ class ContactServiceImplTest {
 
         Assertions.assertIterableEquals(filteredContacts, actualContacts);
     }
+
+    @Test
+    void givenNoContactAndPostalCodeIsNotNull_getContactsReturnsNull() throws Exception {
+        String postalCode = "75000";
+        doReturn(null).when(contactRepository).findByAddressPostalCode(postalCode);
+
+        List<Contact> actualContacts = contactService.getContacts(postalCode);
+
+        Assertions.assertIterableEquals(null, actualContacts);
+    }
 }
