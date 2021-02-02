@@ -28,6 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -110,6 +111,9 @@ public class ContactControllerTest {
         performPost(contactCreationDTO).andExpect(status().isBadRequest());
     }
 
+    @Captor
+    ArgumentCaptor<Contact> contactCaptor;
+
     @Test
     void whenValidInput_thenMapsToBusinessModel() throws Exception {
         ContactCreationDTO contactCreationDTO = createValidContactCreationDTO();
@@ -118,7 +122,6 @@ public class ContactControllerTest {
 
         performPost(contactCreationDTO);
 
-        ArgumentCaptor<Contact> contactCaptor = ArgumentCaptor.forClass(Contact.class);
         verify(contactService, times(1)).create(contactCaptor.capture());
         
         Contact capturedContact = contactCaptor.getValue();
